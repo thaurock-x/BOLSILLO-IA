@@ -404,7 +404,7 @@ async function enviarMensaje() {
     const asyncChunkGenerator = await engine.chat.completions.create({
       messages: chatMessages,
       temperature: 0.13,
-      max_tokens: 1024,
+      max_tokens: 512,
       top_p: 0.3,
       frequency_penalty: 0.2,
       stream: true // <--- ¡ACTIVAMOS EL MODO STREAM!
