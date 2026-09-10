@@ -304,14 +304,15 @@ startBtn.onclick = async () => {
   progressContainer.style.display = "block";
 
   try {
+    // Definimos la configuración apuntando 100% a HuggingFace
     const customAppConfig = {
       model_list: [
         {
           model: "https://huggingface.co/mlc-ai/Llama-3.2-3B-Instruct-q4f16_1-MLC",
           model_id: "Llama-3.2-3B-Instruct-q4f16_1-MLC",
-          model_lib: "https://raw.githubusercontent.com/mlc-ai/binary-mlc-llm-libs/main/web-llm-models/v0_2_79/Llama-3.2-3B-Instruct-q4f16_1-ctx4k-webgpu.wasm",
+          model_lib: "https://huggingface.co/mlc-ai/Llama-3.2-3B-Instruct-q4f16_1-MLC/resolve/main/Llama-3.2-3B-Instruct-q4f16_1-ctx4k-webgpu.wasm",
           overrides: {
-            context_window_size: 2048 // Limita la ventana de contexto para ahorrar RAM en móviles
+            context_window_size: 2048 // Recomendado para evitar saturación de RAM en celulares
           }
         }
       ]
@@ -337,14 +338,14 @@ startBtn.onclick = async () => {
       cambiarBot("matematicas");
       attachEvents();
     }, 1500);
+
   } catch (err) {
     console.error(err);
-    progressText.innerHTML = `Error: ${err.message || err}<br>Recarga o usa Chrome/Edge actualizado.`;
+    progressText.innerHTML = `Error: ${err.message || err}<br>Asegurate de tener espacio libre y no usar modo incógnito.`;
     startBtn.disabled = false;
     startBtn.textContent = "Reintentar descarga";
   }
 };
-
 
 function attachEvents() {
   const hamburger = document.getElementById("hamburger");
