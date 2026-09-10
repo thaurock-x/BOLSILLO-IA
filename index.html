@@ -305,15 +305,24 @@ startBtn.onclick = async () => {
 
   try {
     engine = await CreateMLCEngine(
-      "​Llama-3.2-3B-Instruct-q4f16_1-MLC",
-      {
-        initProgressCallback: (report) => {
-          const pct = Math.round(report.progress * 100);
-          progressBar.style.width = pct + "%";
-          progressText.textContent = `${pct}% • ${report.text || "Cargando..."} (${Math.round(report.timeElapsed / 1000)}s)`;
+  "Llama-3.2-3B-Instruct-q4f16_1-MLC",
+  {
+    appConfig: {
+      model_list: [
+        {
+          model: "https://huggingface.co/mlc-ai/Llama-3.2-3B-Instruct-q4f16_1-MLC",
+          model_id: "Llama-3.2-3B-Instruct-q4f16_1-MLC",
+          model_lib: "https://raw.githubusercontent.com/mlc-ai/binary-mlc-llm-libs/main/web-llm-models/v0_2_79/Llama-3.2-3B-Instruct-q4f16_1-ctx4k-webgpu.wasm",
         }
-      }
-    );
+      ]
+    },
+    initProgressCallback: (report) => {
+      const pct = Math.round(report.progress * 100);
+      progressBar.style.width = pct + "%";
+      progressText.textContent = `${pct}% • ${report.text || "Cargando..."} (${Math.round(report.timeElapsed / 1000)}s)`;
+    }
+  }
+);
 
     progressText.textContent = "¡Modelo cargado! Iniciando...";
     setTimeout(() => {
