@@ -304,15 +304,16 @@ startBtn.onclick = async () => {
   progressContainer.style.display = "block";
 
   try {
-    // Definimos la configuración apuntando 100% a HuggingFace
     const customAppConfig = {
       model_list: [
         {
-          model: "https://huggingface.co/mlc-ai/Llama-3.2-3B-Instruct-q4f16_1-MLC",
+          // Reemplazá 'TU-USUARIO/TU-REPOSITO' con tus datos de Hugging Face
+          model: "https://huggingface.co/Thaurock/Llama-3.2-3B-Instruct-q4f16_1-MLC",
           model_id: "Llama-3.2-3B-Instruct-q4f16_1-MLC",
+          // Servimos el archivo WASM directamente desde el CDN de Hugging Face
           model_lib: "https://huggingface.co/mlc-ai/Llama-3.2-3B-Instruct-q4f16_1-MLC/resolve/main/Llama-3.2-3B-Instruct-q4f16_1-ctx4k-webgpu.wasm",
           overrides: {
-            context_window_size: 2048 // Recomendado para evitar saturación de RAM en celulares
+            context_window_size: 2048 // Previene saturación de RAM en navegadores móviles
           }
         }
       ]
@@ -340,8 +341,8 @@ startBtn.onclick = async () => {
     }, 1500);
 
   } catch (err) {
-    console.error(err);
-    progressText.innerHTML = `Error: ${err.message || err}<br>Asegurate de tener espacio libre y no usar modo incógnito.`;
+    console.error("Error al inicializar el modelo:", err);
+    progressText.innerHTML = `Error: ${err.message || err}<br>Revisá que el repositorio sea público y el dispositivo tenga espacio suficiente.`;
     startBtn.disabled = false;
     startBtn.textContent = "Reintentar descarga";
   }
