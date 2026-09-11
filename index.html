@@ -304,13 +304,14 @@ startBtn.onclick = async () => {
   progressContainer.style.display = "block";
 
   try {
-    const customAppConfig = {
+        const customAppConfig = {
       model_list: [
         {
-          // URL completa al archivo mlc-chat-config.json
-          model: "https://huggingface.co/Thaurock/Llama-3.2-3B-Instruct-q4f16_1-MLC/raw/main/mlc-chat-config.json",
+          // 1. Apuntar a la raíz del repositorio en Hugging Face (sin mlc-chat-config.json)
+          model: "https://huggingface.co/Thaurock/Llama-3.2-3B-Instruct-q4f16_1-MLC",
           model_id: "Llama-3.2-3B-Instruct-q4f16_1-MLC",
-          model_lib: "https://huggingface.co/mlc-ai/Llama-3.2-3B-Instruct-q4f16_1-MLC/resolve/main/Llama-3.2-3B-Instruct-q4f16_1-ctx4k-webgpu.wasm",
+          // 2. URL del motor WASM corregida
+          model_lib: "https://raw.githubusercontent.com/mlc-ai/binary-mlc-llm-libs/main/Llama-3.2-3B-Instruct-q4f16_1-ctx4k-webgpu.wasm",
           overrides: {
             context_window_size: 2048
           }
