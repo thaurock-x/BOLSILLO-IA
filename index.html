@@ -134,6 +134,20 @@
   background: #444;
   border-color: var(--primary);
 }
+    .tts-btn {
+  position: absolute;
+  bottom: 6px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  transition: 0.2s;
+}
+.tts-btn:hover { color: var(--primary); }
+
   </style>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -387,6 +401,24 @@ function cambiarBot(id) {
   sidebar.classList.remove("active");
   attachEvents();
 }
+window.hablarTexto = function(texto) {
+  if (!('speechSynthesis' in window)) {
+    alert("Tu navegador no soporta lectura de voz.");
+    return;
+  }
+  
+  // Detiene cualquier lectura que esté sonando previamente
+  window.speechSynthesis.cancel(); 
+  
+  // Limpia el formato Markdown (*, #, etc.) y etiquetas HTML para leer texto limpio
+  const textoLimpio = texto.replace(/<[^>]*>?/gm, '').replace(/[*_#`]/g, '');
+  
+  const utterance = new SpeechSynthesisUtterance(textoLimpio);
+  utterance.lang = 'es-AR'; // Español
+  utterance.rate = 1.0;   // Velocidad normal
+  
+  window.speechSynthesis.speak(utterance);
+};
 
 async function enviarMensaje() {
   if (!engine) {
@@ -428,7 +460,12 @@ async function enviarMensaje() {
       respuestaDiv.innerHTML = marked.parse(respuestaCompleta);
       msgDiv.scrollTop = msgDiv.scrollHeight;
     }
-
+const ttsBtn = document.createElement("button");
+    ttsBtn.className = "tts-btn";
+    ttsBtn.title = "Escuchar respuesta";
+    ttsBtn.innerHTML = "🔊";
+    ttsBtn.onclick = () => hablarTexto(respuestaCompleta);
+    respuestaDiv.appendChild(ttsBtn);
     chatMessages.push({ role: "assistant", content: respuestaCompleta });
 
   } catch (e) {
