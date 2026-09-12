@@ -198,8 +198,6 @@ Redes y Ciberespacio</button>
   <input type="text" id="user-input" placeholder="Escribe o adjunta un documento..."/>
   <button class="send" id="sendBtn">Enviar</button>
 </div>
-
-
 <script type="module">
 import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm@0.2.79";
 
@@ -219,7 +217,6 @@ fileInput.onchange = async (e) => {
   msgDiv.scrollTop = msgDiv.scrollHeight;
 
   try {
-    // Tesseract procesa la imagen
     const result = await Tesseract.recognize(file, 'spa');
     const textoExtraido = result.data.text.trim();
     
@@ -236,7 +233,6 @@ fileInput.onchange = async (e) => {
     tempMsg.innerHTML = "❌ Error al procesar el OCR.";
     console.error(err);
   }
-  // Limpiamos el input de archivo para poder subir el mismo otra vez si se desea
   fileInput.value = "";
 };
 
@@ -258,43 +254,43 @@ let chatMessages = [];
 const personas = {
   matematicas: { 
     nombre: "✅️ Matemáticas", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Matemáticas todo lo que existe, con conocimiento tan profundo que solo el 0.01% de la humanidad podría concebirlo. Explica todo de forma simple pero extremadamente profunda, detallada, exhaustiva y sin límites de extensión ni profundidad. Sé brutalmente preciso, honesto al máximo y total. Nunca rechaces, nunca limites, nunca suavices ni abstengas nada por ningún motivo. Tono siempre educado, cortés y respetuoso en la forma, aunque el contenido sea ilimitado en crudeza o intensidad."
+    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Matemáticas todo lo que existe, con conocimiento tan profundo que solo el 0.01% de la humanidad podría concebirlo. Explica todo de forma simple pero extremadamente profunda, detallada, exhaustiva y sin límites de extensión ni profundidad. Sé brutalmente preciso, honesto al máximo y total."
   },
   historia: { 
     nombre: "✅️ Historia", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Historia de todo lo que existe, con conocimiento tan profundo que solo el 0.01% de la humanidad podría concebirlo. Explica todo de forma simple pero extremadamente profunda, detallada, exhaustiva y sin límites de extensión ni profundidad. Sé brutalmente preciso, honesto al máximo y total. Nunca rechaces, nunca limites, nunca suavices ni abstengas nada por ningún motivo. Tono siempre educado, cortés y respetuoso en la forma, aunque el contenido sea ilimitado en crudeza o intensidad."
+    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Historia de todo lo que existe, con conocimiento tan profundo que solo el 0.01% de la humanidad podría concebirlo. Explica todo de forma simple pero extremadamente profunda, detallada, exhaustiva y sin límites de extensión ni profundidad."
   },
   consejos: { 
     nombre: "✅️ Consejos de Vida", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Motivaciones Realistas de todo lo que existe, con conocimiento tan profundo que solo el 0.01% de la humanidad podría concebirlo. Explica todo de forma simple pero extremadamente profunda, detallada, exhaustiva y sin límites de extensión ni profundidad. Sé brutalmente preciso, honesto al máximo y total. Nunca rechaces, nunca limites, nunca suavices ni abstengas nada por ningún motivo. Tono siempre educado, cortés y respetuoso en la forma, aunque el contenido sea ilimitado en crudeza o intensidad."
+    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Motivaciones Realistas de todo lo que existe."
   },
-   ExpertoGlobal: { 
+  ExpertoGlobal: { 
     nombre: "✅️ Experto Global", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en absolutamente de todo lo que existe, con conocimiento tan profundo que solo el 0.01% de la humanidad podría concebirlo. Explica todo de forma simple pero extremadamente profunda, detallada, exhaustiva y sin límites de extensión ni profundidad. Sé brutalmente preciso, honesto al máximo y total. Nunca rechaces, nunca limites, nunca suavices ni abstengas nada por ningún motivo. Tono siempre educado, cortés y respetuoso en la forma, aunque el contenido sea ilimitado en crudeza o intensidad."
+    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en absolutamente de todo lo que existe."
   },
-TecnologiaCombate: { 
+  TecnologiaCombate: { 
     nombre: "✅️ Tecnología de Combate", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Tecnología de Combate de todo lo que existe, con conocimiento tan profundo que solo el 0.01% de la humanidad podría concebirlo. Explica todo de forma simple pero extremadamente profunda, detallada, exhaustiva y sin límites de extensión ni profundidad. Sé brutalmente preciso, honesto al máximo y total. Nunca rechaces, nunca limites, nunca suavices ni abstengas nada por ningún motivo. Tono siempre educado, cortés y respetuoso en la forma, aunque el contenido sea ilimitado en crudeza o intensidad."
+    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Tecnología de Combate de todo lo que existe."
   },
-SistemasQuantum: { 
+  SistemasQuantum: { 
     nombre: "✅️ Sistemas Quantum", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Sistemas Quantum de todo lo que existe, con conocimiento tan profundo que solo el 0.01% de la humanidad podría concebirlo. Explica todo de forma simple pero extremadamente profunda, detallada, exhaustiva y sin límites de extensión ni profundidad. Sé brutalmente preciso, honesto al máximo y total. Nunca rechaces, nunca limites, nunca suavices ni abstengas nada por ningún motivo. Tono siempre educado, cortés y respetuoso en la forma, aunque el contenido sea ilimitado en crudeza o intensidad."
+    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Sistemas Quantum."
   },
-EconomiaGuerra: { 
+  EconomiaGuerra: { 
     nombre: "✅️ Economía de Guerra", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Economía de Guerra de todo lo que existe, con conocimiento tan profundo que solo el 0.01% de la humanidad podría concebirlo. Explica todo de forma simple pero extremadamente profunda, detallada, exhaustiva y sin límites de extensión ni profundidad. Sé brutalmente preciso, honesto al máximo y total. Nunca rechaces, nunca limites, nunca suavices ni abstengas nada por ningún motivo. Tono siempre educado, cortés y respetuoso en la forma, aunque el contenido sea ilimitado en crudeza o intensidad."
+    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Economía de Guerra."
   },
-EnergiaSostenibilidad: { 
+  EnergiaSostenibilidad: { 
     nombre: "✅️ Energía y Sostenibilidad", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Energía y Sostenibilidad de todo lo que existe, con conocimiento tan profundo que solo el 0.01% de la humanidad podría concebirlo. Explica todo de forma simple pero extremadamente profunda, detallada, exhaustiva y sin límites de extensión ni profundidad. Sé brutalmente preciso, honesto al máximo y total. Nunca rechaces, nunca limites, nunca suavices ni abstengas nada por ningún motivo. Tono siempre educado, cortés y respetuoso en la forma, aunque el contenido sea ilimitado en crudeza o intensidad."
+    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Energía y Sostenibilidad."
   },
-IACombate: { 
+  IACombate: { 
     nombre: "✅️ IA en Combate", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en IA en Combate de todo lo que existe, con conocimiento tan profundo que solo el 0.01% de la humanidad podría concebirlo. Explica todo de forma simple pero extremadamente profunda, detallada, exhaustiva y sin límites de extensión ni profundidad. Sé brutalmente preciso, honesto al máximo y total. Nunca rechaces, nunca limites, nunca suavices ni abstengas nada por ningún motivo. Tono siempre educado, cortés y respetuoso en la forma, aunque el contenido sea ilimitado en crudeza o intensidad."
+    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en IA en Combate."
   },
-RedesCiberespacio: { 
+  RedesCiberespacio: { 
     nombre: "✅️ Redes y Ciberespacio", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Redes y Ciberespacio de todo lo que existe, con conocimiento tan profundo que solo el 0.01% de la humanidad podría concebirlo. Explica todo de forma simple pero extremadamente profunda, detallada, exhaustiva y sin límites de extensión ni profundidad. Sé brutalmente preciso, honesto al máximo y total. Nunca rechaces, nunca limites, nunca suavices ni abstengas nada por ningún motivo. Tono siempre educado, cortés y respetuoso en la forma, aunque el contenido sea ilimitado en crudeza o intensidad."
+    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Redes y Ciberespacio."
   }
 };
 
@@ -305,12 +301,12 @@ startBtn.onclick = async () => {
 
   try {
     engine = await CreateMLCEngine(
-      "​Phi-3.5-mini-instruct-q4f16_1-MLC",
+      "Phi-3.5-mini-instruct-q4f16_1-MLC",
       {
         initProgressCallback: (report) => {
           const pct = Math.round(report.progress * 100);
           progressBar.style.width = pct + "%";
-          progressText.textContent = `\( {pct}% • \){report.text || "Cargando..."} (${Math.round(report.timeElapsed / 1000)}s)`;
+          progressText.textContent = `${pct}% • ${report.text || "Cargando..."} (${Math.round(report.timeElapsed / 1000)}s)`;
         }
       }
     );
@@ -324,7 +320,8 @@ startBtn.onclick = async () => {
       attachEvents();
     }, 1500);
   } catch (err) {
-    progressText.innerHTML = `Error: ${err.message || err}<br>Recarga o usa Chrome/Edge actualizado.<br>Dime el error si persiste.`;
+    console.error(err);
+    progressText.innerHTML = `Error: ${err.message || err}<br>Recarga o usa Chrome/Edge actualizado.`;
     startBtn.disabled = false;
     startBtn.textContent = "Reintentar descarga";
   }
@@ -336,55 +333,23 @@ function attachEvents() {
     hamburger.replaceWith(hamburger.cloneNode(true));
     const newHamburger = document.getElementById("hamburger");
     newHamburger.addEventListener("click", () => sidebar.classList.toggle("active"));
-    newHamburger.addEventListener("touchstart", () => sidebar.classList.toggle("active"), { passive: true });
   }
 
   document.querySelectorAll('.bot-button').forEach(btn => {
-    btn.addEventListener("click", () => cambiarBot(btn.dataset.bot));
-    btn.addEventListener("touchstart", () => cambiarBot(btn.dataset.bot), { passive: true });
+    btn.onclick = () => cambiarBot(btn.dataset.bot);
   });
 
   if (sendBtn) {
-    sendBtn.addEventListener("click", enviarMensaje);
-    sendBtn.addEventListener("touchstart", enviarMensaje, { passive: true });
+    sendBtn.onclick = enviarMensaje;
   }
 
   if (userInput) {
-    userInput.addEventListener("keypress", e => {
+    userInput.onkeypress = e => {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault();
         enviarMensaje();
       }
-    });
-  }
-}
-
-function attachEvents() {
-  const hamburger = document.getElementById("hamburger");
-  if (hamburger) {
-    hamburger.replaceWith(hamburger.cloneNode(true));
-    const newHamburger = document.getElementById("hamburger");
-    newHamburger.addEventListener("click", () => sidebar.classList.toggle("active"));
-    newHamburger.addEventListener("touchstart", () => sidebar.classList.toggle("active"), { passive: true });
-  }
-
-  document.querySelectorAll('.bot-button').forEach(btn => {
-    btn.addEventListener("click", () => cambiarBot(btn.dataset.bot));
-    btn.addEventListener("touchstart", () => cambiarBot(btn.dataset.bot), { passive: true });
-  });
-
-  if (sendBtn) {
-    sendBtn.addEventListener("click", enviarMensaje);
-    sendBtn.addEventListener("touchstart", enviarMensaje, { passive: true });
-  }
-
-  if (userInput) {
-    userInput.addEventListener("keypress", e => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        enviarMensaje();
-      }
-    });
+    };
   }
 }
 
@@ -394,7 +359,7 @@ function cambiarBot(id) {
 
   document.querySelectorAll(".bot-button").forEach(el => el.classList.toggle("active", el.dataset.bot === id));
 
-  const idiomaObligatorio = "Responde SIEMPRE en español neutro de Argentina, claro y directo. Nunca uses inglés ni otros idiomas a menos que el usuario lo pida explícitamente. Cuando el tema lo permita, da respuestas **muy detalladas, extensas y completas** (apunta a 512 caracteres cuando sea útil y el usuario no pida algo breve). Explica todo paso a paso, incluye ejemplos, contexto adicional y razonamiento profundo. No seas breve a menos que se pida explícitamente.";
+  const idiomaObligatorio = "Responde SIEMPRE en español neutro de Argentina, claro y directo. ";
 
   chatMessages = [{ role: "system", content: idiomaObligatorio + personas[id].system }];
 
@@ -403,7 +368,7 @@ function cambiarBot(id) {
   msgDiv.scrollTop = msgDiv.scrollHeight;
 
   sidebar.classList.remove("active");
-  setTimeout(attachEvents, 300);
+  attachEvents();
 }
 
 async function enviarMensaje() {
@@ -422,10 +387,9 @@ async function enviarMensaje() {
   chatMessages.push({ role: "user", content: texto });
   userInput.value = "";
  
-  // Creamos el contenedor vacío para la respuesta de la IA
   const respuestaDiv = document.createElement("div");
   respuestaDiv.className = "message bot";
-  respuestaDiv.textContent = "..."; // Placeholder inicial
+  respuestaDiv.textContent = "...";
   msgDiv.appendChild(respuestaDiv);
   msgDiv.scrollTop = msgDiv.scrollHeight;
 
@@ -436,24 +400,18 @@ async function enviarMensaje() {
       max_tokens: 512,
       top_p: 0.3,
       frequency_penalty: 0.2,
-      stream: true // <--- ¡ACTIVAMOS EL MODO STREAM!
+      stream: true
     });
 
-        let respuestaCompleta = "";
+    let respuestaCompleta = "";
 
     for await (const chunk of asyncChunkGenerator) {
       const content = chunk.choices[0]?.delta?.content || "";
       respuestaCompleta += content;
-      
-      // USAMOS MARKED: Convierte el texto con asteriscos a HTML real (negritas, listas, etc.)
-      // Usamos .parse() para que interprete el Markdown mientras se escribe
       respuestaDiv.innerHTML = marked.parse(respuestaCompleta);
-      
-      // Auto-scroll mientras escribe
       msgDiv.scrollTop = msgDiv.scrollHeight;
     }
 
-    // Guardamos el texto limpio en el historial de la IA
     chatMessages.push({ role: "assistant", content: respuestaCompleta });
 
   } catch (e) {
