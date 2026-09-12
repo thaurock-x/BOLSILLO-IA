@@ -211,26 +211,43 @@ fileInput.onchange = async (e) => {
   const tempMsg = document.createElement("div");
   tempMsg.className = "message bot";
   tempMsg.style.borderLeft = "4px solid #ff9800"; 
-  tempMsg.innerHTML = "🔍 <b>Analizando documento...</b><br><small>Extrayendo texto localmente.</small>";
+  tempMsg.innerHTML = "🔍 <b>Analizando documento...</b><br><small>Procesando imagen localmente...</small>";
   
   msgDiv.appendChild(tempMsg);
   msgDiv.scrollTop = msgDiv.scrollHeight;
 
   try {
-    const result = await Tesseract.recognize(file, 'spa');
-    const textoExtraido = result.data.text.trim();
-    
-    if (textoExtraido.length > 0) {
-      userInput.value = `Analizá este texto extraído del documento: "${textoExtraido}"`;
-      tempMsg.innerHTML = "✅ <b>Documento leído correctamente.</b><br>Podés editar el texto arriba o darle a Enviar.";
-      tempMsg.style.borderLeft = "4px solid var(--primary)";
-    } else {
-      tempMsg.innerHTML = "⚠️ No se detectó texto legible en la imagen.";
-      tempMsg.style.borderLeft = "4px solid #f44336";
-    }
-    
+    // 1. Convertimos la imagen cargada a Data URL para evitar problemas de compatibilidad
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const imageDataUrl = reader.result;
+
+      try {
+        // 2. Usamos el Worker explícito de Tesseract con soporte en español
+        const worker = await Tesseract.createWorker('spa');
+        const ret = await worker.recognize(imageDataUrl);
+        const textoExtraido = ret.data.text.trim();
+        await worker.terminate(); // Liberamos memoria de la GPU/RAM
+
+        if (textoExtraido.length > 0) {
+          userInput.value = `Analizá este texto extraído del documento: "${textoExtraido}"`;
+          tempMsg.innerHTML = "✅ <b>Documento leído correctamente.</b><br>Podés editar el texto arriba o darle a Enviar.";
+          tempMsg.style.borderLeft = "4px solid var(--primary)";
+        } else {
+          tempMsg.innerHTML = "⚠️ No se detectó texto legible en la imagen.";
+          tempMsg.style.borderLeft = "4px solid #f44336";
+        }
+      } catch (ocrErr) {
+        console.error("Error interno de Tesseract:", ocrErr);
+        tempMsg.innerHTML = "❌ Error al procesar el texto con OCR.";
+        tempMsg.style.borderLeft = "4px solid #f44336";
+      }
+    };
+
+    reader.readAsDataURL(file);
+
   } catch (err) {
-    tempMsg.innerHTML = "❌ Error al procesar el OCR.";
+    tempMsg.innerHTML = "❌ Error al leer el archivo seleccionado.";
     console.error(err);
   }
   fileInput.value = "";
