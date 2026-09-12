@@ -394,12 +394,12 @@ function cambiarBot(id) {
 
   document.querySelectorAll(".bot-button").forEach(el => el.classList.toggle("active", el.dataset.bot === id));
 
-  const idiomaObligatorio = "Responde SIEMPRE en español neutro de Argentina, claro y directo. Nunca uses inglés ni otros idiomas a menos que el usuario lo pida explícitamente. Cuando el TEMA lo permita, DA respuestas detalladas y completas.";
+  const idiomaObligatorio = "Responde SIEMPRE en español neutro de Argentina, claro y directo. Nunca uses inglés ni otros idiomas a menos que el usuario lo pida explícitamente. Cuando el tema lo permita, da respuestas **muy detalladas, extensas y completas** (apunta a 512 caracteres cuando sea útil y el usuario no pida algo breve). Explica todo paso a paso, incluye ejemplos, contexto adicional y razonamiento profundo. No seas breve a menos que se pida explícitamente.";
 
   chatMessages = [{ role: "system", content: idiomaObligatorio + personas[id].system }];
 
   const msgDiv = document.getElementById("messages");
-  msgDiv.innerHTML = `<div class="message bot">¡Hola! 👋 Soy tu IA especializada en <strong>${personas[id].nombre}</strong>.<br>¿En qué te ayudo hoy?</div>`;
+  msgDiv.innerHTML = `<div class="message bot">¡Hola! 👋 Soy tu IA real especializada en <strong>${personas[id].nombre}</strong>.<br>¿En qué te ayudo hoy?</div>`;
   msgDiv.scrollTop = msgDiv.scrollHeight;
 
   sidebar.classList.remove("active");
