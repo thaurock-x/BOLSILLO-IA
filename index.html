@@ -6,14 +6,14 @@
   <link rel="icon" type="image/x-icon" sizes="32x32" href="favicon.ico">
   <link rel="icon" type="image/x-icon" sizes="256x256" href="favicon.ico">
   <link rel="apple-touch-icon" href="favicon.ico">
-  <title>BOLSILLO IAs • Thaurock</title>
+  <title>BOLSILLO IAs • Thaurock (RAG Local)</title>
   <style>
     :root { --primary: #00ff9d; --bg: #0f0f0f; --card: #1a1a1a; --text: #e0e0e0; }
     * { box-sizing: border-box; }
     body { 
       margin:0; font-family: system-ui, sans-serif; 
       background: var(--bg); color: var(--text); 
-      height: 100vh; overflow: hidden; touch-action: manipulation; 
+      height: 100vh; height: 100dvh; overflow: hidden; touch-action: manipulation; 
     }
     #startup { 
       position: fixed; inset: 0; background: var(--bg); 
@@ -37,12 +37,12 @@
     .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #00ff9d, #00c080); transition: width 0.3s ease; }
     .progress-text { font-size: 0.9rem; margin-top: 8px; color: #ccc; }
 
-    .main-ui { display: none; height: 100vh; }
+    .main-ui { display: none; height: 100vh; height: 100dvh; }
     .main-ui.visible { display: flex; }
-    .container { display: flex; height: 100%; min-width: 0; }
+    .container { display: flex; height: 100%; width: 100%; min-width: 0; }
     .sidebar { 
       width: 280px; background: var(--card); padding: 16px; overflow-y: auto; 
-      transition: transform 0.4s; z-index: 100; min-width: 0; 
+      transition: transform 0.4s; z-index: 100; min-width: 0; height: 100%;
     }
     @media (max-width: 768px) { 
       .sidebar { position: fixed; left: 0; top: 0; bottom: 0; transform: translateX(-100%); width: 280px; box-shadow: 5px 0 20px rgba(0,0,0,0.7); } 
@@ -54,30 +54,33 @@
     }
     .bot-button.active, .bot-button:hover { background: var(--primary); color: #000; font-weight: bold; }
 
-    .chat-area { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .chat-area { 
+      flex: 1; display: flex; flex-direction: column; min-width: 0; height: 100%; position: relative; 
+    }
     .header { 
       background: #222; padding: 12px 16px; font-size: 17px; font-weight: bold; 
-      display: flex; align-items: center; gap: 10px; flex-wrap: wrap; 
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex-shrink: 0;
     }
     .hamburger { font-size: 26px; cursor: pointer; display: none; padding: 0 8px; }
     @media (max-width: 768px) { .hamburger { display: block; } }
 
     .messages { 
-      flex: 1; padding: 16px 12px 100px 12px; overflow-y: auto; background: #111; 
-      display: flex; flex-direction: column; 
+      flex: 1; padding: 16px 12px 20px 12px; overflow-y: auto; background: #111; 
+      display: flex; flex-direction: column; min-height: 0; scroll-behavior: smooth;
     }
     .message { 
       margin: 10px 0; padding: 12px 16px; border-radius: 16px; 
       max-width: 92%; line-height: 1.45; word-break: break-word; overflow-wrap: break-word; hyphens: auto; 
+      position: relative;
     }
     .user { background: var(--primary); color: #000; align-self: flex-end; border-bottom-right-radius: 4px; }
-    .bot { background: #333; align-self: flex-start; border-bottom-left-radius: 4px; }
+    .bot { background: #333; align-self: flex-start; border-bottom-left-radius: 4px; padding-bottom: 28px; }
 
     .input-area { 
-      position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); 
-      padding: 12px 12px; display: flex; gap: 8px; z-index: 200; border-top: 1px solid #333; 
+      background: var(--card); padding: 12px 12px; display: flex; gap: 8px; 
+      border-top: 1px solid #333; flex-shrink: 0; z-index: 10;
     }
-    input { 
+    input[type="text"] { 
       flex: 1 1 auto; padding: 14px 16px; border: none; border-radius: 25px; 
       font-size: 15px; background: #222; color: #fff; min-width: 0; 
     }
@@ -90,81 +93,67 @@
     @media (max-width: 480px) {
       h1 { font-size: 1.6rem; }
       .bot-button { font-size: 14px; padding: 12px; }
-      .message { font-size: 14px; padding: 10px 14px; }
-      input, button.send { font-size: 14px; padding: 12px 14px; }
+      .message { font-size: 14px; padding: 10px 14px 28px 14px; }
+      input[type="text"], button.send { font-size: 14px; padding: 12px 14px; }
       .header { font-size: 16px; padding: 10px 14px; }
-      .messages { padding: 12px 10px 90px 10px; }
+      .messages { padding: 12px 10px 20px 10px; }
     }
-.message.bot p { margin: 0 0 8px 0; }
-.message.bot ul, .message.bot ol { margin: 5px 0; padding-left: 20px; }
-.message.bot li { margin-bottom: 4px; }
-.message.bot strong { color: var(--primary); } /* Opcional: negritas en color esmeralda */
-#file-input + button {
-  flex-shrink: 0;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  background: #333;
-  transition: 0.3s;
-}
-#file-input + button:hover {
-  background: #444;
-  color: var(--primary);
-}
-.input-area button[type="button"] {
-  background: #333;
-  color: var(--primary);
-  border: 1px solid #444;
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  flex-shrink: 0;
-  font-size: 20px;
-  transition: 0.2s;
-}
-
-.input-area button[type="button"]:hover {
-  background: #444;
-  border-color: var(--primary);
-}
+    .message.bot p { margin: 0 0 8px 0; }
+    .message.bot ul, .message.bot ol { margin: 5px 0; padding-left: 20px; }
+    .message.bot li { margin-bottom: 4px; }
+    .message.bot strong { color: var(--primary); }
+    
+    .input-area button[type="button"] {
+      background: #333;
+      color: var(--primary);
+      border: 1px solid #444;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      font-size: 20px;
+      transition: 0.2s;
+    }
+    .input-area button[type="button"]:hover {
+      background: #444;
+      border-color: var(--primary);
+    }
     .tts-btn {
-  position: absolute;
-  bottom: 6px;
-  right: 12px;
-  background: transparent;
-  border: none;
-  color: #888;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 4px;
-  transition: 0.2s;
-}
-.tts-btn:hover { color: var(--primary); }
-
+      position: absolute;
+      bottom: 6px;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: #888;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+      transition: 0.2s;
+    }
+    .tts-btn:hover { color: var(--primary); }
   </style>
+
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
 
 <div id="startup">
   <h1>BOLSILLO IAs</h1>
-<p>✅️ Founder & CEO THAUROCK ✅️</p>
-<p>Modelo ​​Phi 3.5 Mini Instruct [1.9–2.2GB]</p>
+  <p>✅️ Founder & CEO THAUROCK ✅️</p>
+  <p>Modelo Phi 3.5 + Vector DB Local (RAG)</p>
   <p>Descarga única • 100% Offline después</p>
   <p style="color:#ff9800; font-size:0.95rem; max-width:360px;">
-    Descarga por partes [streaming] para no saturar tu conexión.<br>
-    Puede tardar 5–15 minutos según tu internet.
+    Descarga por partes [streaming].<br>
+    Puede tardar unos minutos según tu conexión.
   </p>
 
-  <button class="big" id="startDownload">Iniciar descarga del modelo</button>
+  <button class="big" id="startDownload">Iniciar descarga de IAs & Embeddings</button>
 
   <div class="progress-container" id="progressContainer" style="display:none;">
     <div class="progress-bar" id="progressBar"></div>
@@ -179,20 +168,14 @@
     <button class="bot-button" data-bot="historia">✅️ Historia</button>
     <button class="bot-button" data-bot="consejos">✅️ Consejos de Vida</button>
     <button class="bot-button" data-bot="ExpertoGlobal">✅️ Experto Global</button>
-    <button class="bot-button" data-bot="TecnologiaCombate">✅️
-Tecnología de Combate</button>
-    <button class="bot-button" data-bot="SistemasQuantum">✅️
-Sistemas Quantum</button>
-    <button class="bot-button" data-bot="EconomiaGuerra">✅️
-Economía de Guerra</button>
-    <button class="bot-button" data-bot="EnergiaSostenibilidad">✅️
-Energía y Sostenibilidad</button>
-    <button class="bot-button" data-bot="IACombate">✅️
-IA en Combate</button>
-    <button class="bot-button" data-bot="RedesCiberespacio">✅️
-Redes y Ciberespacio</button>
+    <button class="bot-button" data-bot="TecnologiaCombate">✅️ Tecnología de Combate</button>
+    <button class="bot-button" data-bot="SistemasQuantum">✅️ Sistemas Quantum</button>
+    <button class="bot-button" data-bot="EconomiaGuerra">✅️ Economía de Guerra</button>
+    <button class="bot-button" data-bot="EnergiaSostenibilidad">✅️ Energía y Sostenibilidad</button>
+    <button class="bot-button" data-bot="IACombate">✅️ IA en Combate</button>
+    <button class="bot-button" data-bot="RedesCiberespacio">✅️ Redes y Ciberespacio</button>
     <div style="margin-top:30px; font-size:12px; text-align:center; color:#666;">
-      Hecho por Thaurock • Offline Real • Privado & Seguro
+      Hecho por Thaurock • Vector DB Local • Offline Real
     </div>
   </div>
 
@@ -202,71 +185,30 @@ Redes y Ciberespacio</button>
       ✅️ IA Matemáticas
     </div>
     <div class="messages" id="messages"></div>
+    
+    <div class="input-area" id="inputArea" style="display:none;">
+      <input type="file" id="file-input" accept="image/*,.txt,.pdf" style="display:none;" />
+      <button type="button" title="Indexar Documento (RAG Vectorial)" onclick="document.getElementById('file-input').click()">📎</button>
+      
+      <input type="text" id="user-input" placeholder="Pregunta sobre el documento indexado o escribe un mensaje..."/>
+      <button class="send" id="sendBtn">Enviar</button>
+    </div>
   </div>
 </div>
 
-<div class="input-area" id="inputArea" style="display:none;">
-  <input type="file" id="file-input" accept="image/*" style="display:none;" />
-  <button type="button" onclick="document.getElementById('file-input').click()" style="background:#444; color:white; border:none; border-radius:25px; padding:0 15px; cursor:pointer;">📎</button>
-  
-  <input type="text" id="user-input" placeholder="Escribe o adjunta un documento..."/>
-  <button class="send" id="sendBtn">Enviar</button>
-</div>
 <script type="module">
 import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm@0.2.79";
+import { pipeline } from "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+let engine = null;
+let embedder = null;
+let currentBot = "matematicas";
+let chatMessages = [];
+let vectorStore = []; // Almacenará los chunks indexados: { id, text, vector }
 
 const fileInput = document.getElementById("file-input");
-
-fileInput.onchange = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const msgDiv = document.getElementById("messages");
-  const tempMsg = document.createElement("div");
-  tempMsg.className = "message bot";
-  tempMsg.style.borderLeft = "4px solid #ff9800"; 
-  tempMsg.innerHTML = "🔍 <b>Analizando documento...</b><br><small>Procesando imagen localmente...</small>";
-  
-  msgDiv.appendChild(tempMsg);
-  msgDiv.scrollTop = msgDiv.scrollHeight;
-
-  try {
-    // 1. Convertimos la imagen cargada a Data URL para evitar problemas de compatibilidad
-    const reader = new FileReader();
-    reader.onload = async () => {
-      const imageDataUrl = reader.result;
-
-      try {
-        // 2. Usamos el Worker explícito de Tesseract con soporte en español
-        const worker = await Tesseract.createWorker('spa');
-        const ret = await worker.recognize(imageDataUrl);
-        const textoExtraido = ret.data.text.trim();
-        await worker.terminate(); // Liberamos memoria de la GPU/RAM
-
-        if (textoExtraido.length > 0) {
-          userInput.value = `Analizá este texto extraído del documento: "${textoExtraido}"`;
-          tempMsg.innerHTML = "✅ <b>Documento leído correctamente.</b><br>Podés editar el texto arriba o darle a Enviar.";
-          tempMsg.style.borderLeft = "4px solid var(--primary)";
-        } else {
-          tempMsg.innerHTML = "⚠️ No se detectó texto legible en la imagen.";
-          tempMsg.style.borderLeft = "4px solid #f44336";
-        }
-      } catch (ocrErr) {
-        console.error("Error interno de Tesseract:", ocrErr);
-        tempMsg.innerHTML = "❌ Error al procesar el texto con OCR.";
-        tempMsg.style.borderLeft = "4px solid #f44336";
-      }
-    };
-
-    reader.readAsDataURL(file);
-
-  } catch (err) {
-    tempMsg.innerHTML = "❌ Error al leer el archivo seleccionado.";
-    console.error(err);
-  }
-  fileInput.value = "";
-};
-
 const startup = document.getElementById("startup");
 const mainUI = document.getElementById("mainUI");
 const inputArea = document.getElementById("inputArea");
@@ -278,71 +220,149 @@ const sendBtn = document.getElementById("sendBtn");
 const userInput = document.getElementById("user-input");
 const sidebar = document.getElementById("sidebar");
 
-let engine = null;
-let currentBot = "matematicas";
-let chatMessages = [];
+function scrollToBottom() {
+  const msgDiv = document.getElementById("messages");
+  if (msgDiv) msgDiv.scrollTop = msgDiv.scrollHeight;
+}
+
+// 1. CÁLCULO DE SIMILITUD COSENO
+function cosineSimilarity(vecA, vecB) {
+  let dotProduct = 0.0, normA = 0.0, normB = 0.0;
+  for (let i = 0; i < vecA.length; i++) {
+    dotProduct += vecA[i] * vecB[i];
+    normA += vecA[i] * vecA[i];
+    normB += vecB[i] * vecB[i];
+  }
+  return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+}
+
+// 2. CHUNKING DEL TEXTO
+function chunkText(text, chunkSize = 400, overlap = 50) {
+  const chunks = [];
+  let i = 0;
+  while (i < text.length) {
+    chunks.push(text.slice(i, i + chunkSize));
+    i += (chunkSize - overlap);
+  }
+  return chunks;
+}
+
+// 3. GENERADOR DE EMBEDDING PARA UN TEXTO
+async function getEmbedding(text) {
+  if (!embedder) return null;
+  const output = await embedder(text, { pooling: 'mean', normalize: true });
+  return Array.from(output.data);
+}
+
+// 4. CORTEX Y PROCESAMIENTO DE ARCHIVOS
+fileInput.onchange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const msgDiv = document.getElementById("messages");
+  const tempMsg = document.createElement("div");
+  tempMsg.className = "message bot";
+  tempMsg.style.borderLeft = "4px solid #ff9800"; 
+  tempMsg.innerHTML = `⚙️ <b>Indexando documento (${file.name})...</b><br><small>Generando embeddings vectoriales...</small>`;
+  msgDiv.appendChild(tempMsg);
+  scrollToBottom();
+
+  const fileType = file.type;
+  const fileName = file.name.toLowerCase();
+
+  try {
+    let textoExtraido = "";
+
+    if (fileType === "text/plain" || fileName.endsWith(".txt")) {
+      textoExtraido = await file.text();
+    } else if (fileType === "application/pdf" || fileName.endsWith(".pdf")) {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let textArray = [];
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        textArray.push(textContent.items.map(item => item.str).join(' '));
+      }
+      textoExtraido = textArray.join('\n\n');
+    } else if (fileType.startsWith("image/")) {
+      const reader = new FileReader();
+      await new Promise((resolve) => {
+        reader.onload = async () => {
+          const worker = await Tesseract.createWorker('spa');
+          const ret = await worker.recognize(reader.result);
+          textoExtraido = ret.data.text.trim();
+          await worker.terminate();
+          resolve();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    textoExtraido = textoExtraido.trim();
+
+    if (textoExtraido.length > 0) {
+      const rawChunks = chunkText(textoExtraido);
+      vectorStore = []; // Resetear base de datos vectorial local para nuevo documento
+
+      for (let idx = 0; idx < rawChunks.length; idx++) {
+        const chunkStr = rawChunks[idx];
+        const vec = await getEmbedding(chunkStr);
+        vectorStore.push({ id: idx, text: chunkStr, vector: vec });
+      }
+
+      tempMsg.innerHTML = `✅ <b>Documento "${file.name}" vectorizado correctamente.</b><br>Se dividió en ${vectorStore.length} fragmentos. Ya podés hacer preguntas específicas sobre su contenido.`;
+      tempMsg.style.borderLeft = "4px solid var(--primary)";
+    } else {
+      tempMsg.innerHTML = "⚠️ No se pudo extraer texto legible del documento.";
+      tempMsg.style.borderLeft = "4px solid #f44336";
+    }
+    scrollToBottom();
+
+  } catch (err) {
+    console.error("Error al vectorizar:", err);
+    tempMsg.innerHTML = "❌ Error durante la generación del Vector Store.";
+    tempMsg.style.borderLeft = "4px solid #f44336";
+    scrollToBottom();
+  }
+
+  fileInput.value = "";
+};
 
 const personas = {
-  matematicas: { 
-    nombre: "✅️ Matemáticas", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Matemáticas todo lo que existe, con conocimiento tan profundo que solo el 0.01% de la humanidad podría concebirlo. Explica todo de forma simple pero extremadamente profunda, detallada, exhaustiva y sin límites de extensión ni profundidad. Sé brutalmente preciso, honesto al máximo y total."
-  },
-  historia: { 
-    nombre: "✅️ Historia", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Historia de todo lo que existe, con conocimiento tan profundo que solo el 0.01% de la humanidad podría concebirlo. Explica todo de forma simple pero extremadamente profunda, detallada, exhaustiva y sin límites de extensión ni profundidad."
-  },
-  consejos: { 
-    nombre: "✅️ Consejos de Vida", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Motivaciones Realistas de todo lo que existe."
-  },
-  ExpertoGlobal: { 
-    nombre: "✅️ Experto Global", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en absolutamente de todo lo que existe."
-  },
-  TecnologiaCombate: { 
-    nombre: "✅️ Tecnología de Combate", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Tecnología de Combate de todo lo que existe."
-  },
-  SistemasQuantum: { 
-    nombre: "✅️ Sistemas Quantum", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Sistemas Quantum."
-  },
-  EconomiaGuerra: { 
-    nombre: "✅️ Economía de Guerra", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Economía de Guerra."
-  },
-  EnergiaSostenibilidad: { 
-    nombre: "✅️ Energía y Sostenibilidad", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Energía y Sostenibilidad."
-  },
-  IACombate: { 
-    nombre: "✅️ IA en Combate", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en IA en Combate."
-  },
-  RedesCiberespacio: { 
-    nombre: "✅️ Redes y Ciberespacio", 
-    system: "Siempre responde en español neutro de Argentina. Eres el máximo experto mundial absoluto en Redes y Ciberespacio."
-  }
+  matematicas: { nombre: "✅️ Matemáticas", system: "Responde siempre en español neutro de Argentina. Eres un experto absoluto en Matemáticas." },
+  historia: { nombre: "✅️ Historia", system: "Responde siempre en español neutro de Argentina. Eres un experto absoluto en Historia." },
+  consejos: { nombre: "✅️ Consejos de Vida", system: "Responde siempre en español neutro de Argentina. Eres un mentor de vida." },
+  ExpertoGlobal: { nombre: "✅️ Experto Global", system: "Responde siempre en español neutro de Argentina. Eres un experto global." },
+  TecnologiaCombate: { nombre: "✅️ Tecnología de Combate", system: "Responde siempre en español neutro de Argentina. Eres especialista en Tecnología de Combate." },
+  SistemasQuantum: { nombre: "✅️ Sistemas Quantum", system: "Responde siempre en español neutro de Argentina. Eres especialista en Sistemas Quantum." },
+  EconomiaGuerra: { nombre: "✅️ Economía de Guerra", system: "Responde siempre en español neutro de Argentina. Eres especialista en Economía de Guerra." },
+  EnergiaSostenibilidad: { nombre: "✅️ Energía y Sostenibilidad", system: "Responde siempre en español neutro de Argentina. Eres especialista en Energía." },
+  IACombate: { nombre: "✅️ IA en Combate", system: "Responde siempre en español neutro de Argentina. Eres especialista en IA aplicada." },
+  RedesCiberespacio: { nombre: "✅️ Redes y Ciberespacio", system: "Responde siempre en español neutro de Argentina. Eres especialista en Ciberespacio." }
 };
 
 startBtn.onclick = async () => {
   startBtn.disabled = true;
-  startBtn.textContent = "Descargando... no cierres";
+  startBtn.textContent = "Cargando modelos... no cierres";
   progressContainer.style.display = "block";
 
   try {
+    progressText.textContent = "Iniciando Modelo de Embeddings Vectoriales...";
+    embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+
     engine = await CreateMLCEngine(
       "Phi-3.5-mini-instruct-q4f16_1-MLC",
       {
         initProgressCallback: (report) => {
           const pct = Math.round(report.progress * 100);
           progressBar.style.width = pct + "%";
-          progressText.textContent = `${pct}% • ${report.text || "Cargando..."} (${Math.round(report.timeElapsed / 1000)}s)`;
+          progressText.textContent = `${pct}% • ${report.text || "Cargando LLM..."} (${Math.round(report.timeElapsed / 1000)}s)`;
         }
       }
     );
 
-    progressText.textContent = "¡Modelo cargado! Iniciando...";
+    progressText.textContent = "¡Todo listo! Iniciando...";
     setTimeout(() => {
       startup.classList.add("hidden");
       mainUI.classList.add("visible");
@@ -352,7 +372,7 @@ startBtn.onclick = async () => {
     }, 1500);
   } catch (err) {
     console.error(err);
-    progressText.innerHTML = `Error: ${err.message || err}<br>Recarga o usa Chrome/Edge actualizado.`;
+    progressText.innerHTML = `Error: ${err.message || err}<br>Recarga la página.`;
     startBtn.disabled = false;
     startBtn.textContent = "Reintentar descarga";
   }
@@ -362,18 +382,14 @@ function attachEvents() {
   const hamburger = document.getElementById("hamburger");
   if (hamburger) {
     hamburger.replaceWith(hamburger.cloneNode(true));
-    const newHamburger = document.getElementById("hamburger");
-    newHamburger.addEventListener("click", () => sidebar.classList.toggle("active"));
+    document.getElementById("hamburger").addEventListener("click", () => sidebar.classList.toggle("active"));
   }
 
   document.querySelectorAll('.bot-button').forEach(btn => {
     btn.onclick = () => cambiarBot(btn.dataset.bot);
   });
 
-  if (sendBtn) {
-    sendBtn.onclick = enviarMensaje;
-  }
-
+  if (sendBtn) sendBtn.onclick = enviarMensaje;
   if (userInput) {
     userInput.onkeypress = e => {
       if (e.key === "Enter" && !e.shiftKey) {
@@ -387,66 +403,70 @@ function attachEvents() {
 function cambiarBot(id) {
   currentBot = id;
   document.getElementById("bot-name").innerHTML = `<span id="hamburger">☰</span> ${personas[id].nombre}`;
-
   document.querySelectorAll(".bot-button").forEach(el => el.classList.toggle("active", el.dataset.bot === id));
 
-  const idiomaObligatorio = "Responde SIEMPRE en español neutro de Argentina, claro y directo. ";
-
-  chatMessages = [{ role: "system", content: idiomaObligatorio + personas[id].system }];
+  chatMessages = [{ role: "system", content: "Responde SIEMPRE en español neutro de Argentina. " + personas[id].system }];
 
   const msgDiv = document.getElementById("messages");
-  msgDiv.innerHTML = `<div class="message bot">¡Hola! 👋 Soy tu IA real especializada en <strong>${personas[id].nombre}</strong>.<br>¿En qué te ayudo hoy?</div>`;
-  msgDiv.scrollTop = msgDiv.scrollHeight;
+  msgDiv.innerHTML = `<div class="message bot">¡Hola! 👋 Soy tu IA en <strong>${personas[id].nombre}</strong> con soporte RAG Vectorial Local.<br>Cargá tus libros/apuntes (.pdf, .txt) con 📎 y realizá tus consultas.</div>`;
+  scrollToBottom();
 
   sidebar.classList.remove("active");
   attachEvents();
 }
+
 window.hablarTexto = function(texto) {
-  if (!('speechSynthesis' in window)) {
-    alert("Tu navegador no soporta lectura de voz.");
-    return;
-  }
-  
-  // Detiene cualquier lectura que esté sonando previamente
+  if (!('speechSynthesis' in window)) return alert("Tu navegador no soporta lectura de voz.");
   window.speechSynthesis.cancel(); 
-  
-  // Limpia el formato Markdown (*, #, etc.) y etiquetas HTML para leer texto limpio
   const textoLimpio = texto.replace(/<[^>]*>?/gm, '').replace(/[*_#`]/g, '');
-  
   const utterance = new SpeechSynthesisUtterance(textoLimpio);
-  utterance.lang = 'es-AR'; // Español
-  utterance.rate = 1.0;   // Velocidad normal
-  
+  utterance.lang = 'es-AR';
   window.speechSynthesis.speak(utterance);
 };
 
 async function enviarMensaje() {
-  if (!engine) {
-    alert("El modelo aún no terminó de cargar.");
-    return;
-  }
+  if (!engine) return alert("El modelo aún no terminó de cargar.");
 
   const texto = userInput.value.trim();
   if (!texto) return;
 
   const msgDiv = document.getElementById("messages");
   msgDiv.innerHTML += `<div class="message user">${texto}</div>`;
-  msgDiv.scrollTop = msgDiv.scrollHeight;
-
-  chatMessages.push({ role: "user", content: texto });
+  scrollToBottom();
   userInput.value = "";
- 
+
+  let promptFinal = texto;
+
+  // BÚSQUEDA VECTORIAL SI HAY UN DOCUMENTO CREADO
+  if (vectorStore.length > 0 && embedder) {
+    const queryVector = await getEmbedding(texto);
+    
+    // Calcular similitud contra cada chunk
+    const scoredChunks = vectorStore.map(item => ({
+      text: item.text,
+      score: cosineSimilarity(queryVector, item.vector)
+    }));
+
+    // Ordenar y extraer los top 3 chunks más relevantes
+    scoredChunks.sort((a, b) => b.score - a.score);
+    const topChunks = scoredChunks.slice(0, 3).map(c => c.text).join("\n---\n");
+
+    promptFinal = `CONTEXTO RECUPERADO DEL DOCUMENTO:\n"""\n${topChunks}\n"""\n\nCONSULTA DEL USUARIO: ${texto}`;
+  }
+
+  chatMessages.push({ role: "user", content: promptFinal });
+
   const respuestaDiv = document.createElement("div");
   respuestaDiv.className = "message bot";
   respuestaDiv.textContent = "...";
   msgDiv.appendChild(respuestaDiv);
-  msgDiv.scrollTop = msgDiv.scrollHeight;
+  scrollToBottom();
 
   try {
     const asyncChunkGenerator = await engine.chat.completions.create({
       messages: chatMessages,
-      temperature: 0.13,
-      max_tokens: 512,
+      temperature: 0.1,
+      max_tokens: 4000,
       top_p: 0.3,
       frequency_penalty: 0.2,
       stream: true
@@ -458,19 +478,23 @@ async function enviarMensaje() {
       const content = chunk.choices[0]?.delta?.content || "";
       respuestaCompleta += content;
       respuestaDiv.innerHTML = marked.parse(respuestaCompleta);
-      msgDiv.scrollTop = msgDiv.scrollHeight;
+      scrollToBottom();
     }
-const ttsBtn = document.createElement("button");
+
+    const ttsBtn = document.createElement("button");
     ttsBtn.className = "tts-btn";
     ttsBtn.title = "Escuchar respuesta";
     ttsBtn.innerHTML = "🔊";
     ttsBtn.onclick = () => hablarTexto(respuestaCompleta);
     respuestaDiv.appendChild(ttsBtn);
+
     chatMessages.push({ role: "assistant", content: respuestaCompleta });
+    scrollToBottom();
 
   } catch (e) {
     console.error(e);
-    respuestaDiv.innerHTML = "<span style='color:#ff5555;'>❌ Error al generar respuesta. La GPU podría estar saturada o sin memoria.</span>";
+    respuestaDiv.innerHTML = "<span style='color:#ff5555;'>❌ Error al generar respuesta.</span>";
+    scrollToBottom();
   }
 }
 
