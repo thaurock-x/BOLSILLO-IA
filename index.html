@@ -167,16 +167,16 @@
 <div class="main-ui container" id="mainUI">
   <div class="sidebar" id="sidebar">
     <h2 style="color:var(--primary); text-align:center;">IAs Especializadas</h2>
-    <button class="bot-button active" data-bot="matematicas">✅️ Matemáticas</button>
-    <button class="bot-button" data-bot="historia">✅️ Historia</button>
-    <button class="bot-button" data-bot="consejos">✅️ Consejos de Vida</button>
-    <button class="bot-button" data-bot="ExpertoGlobal">✅️ Experto Global</button>
-    <button class="bot-button" data-bot="TecnologiaCombate">✅️ Tecnología de Combate</button>
-    <button class="bot-button" data-bot="SistemasQuantum">✅️ Sistemas Quantum</button>
-    <button class="bot-button" data-bot="EconomiaGuerra">✅️ Economía de Guerra</button>
-    <button class="bot-button" data-bot="EnergiaSostenibilidad">✅️ Energía y Sostenibilidad</button>
-    <button class="bot-button" data-bot="IACombate">✅️ IA en Combate</button>
-    <button class="bot-button" data-bot="RedesCiberespacio">✅️ Redes y Ciberespacio</button>
+    <button class="bot-button active" data-bot="matematicas">🔢 Matemáticas</button>
+    <button class="bot-button" data-bot="historia">⏳️ Historia</button>
+    <button class="bot-button" data-bot="programacion">💻 Programación</button>
+    <button class="bot-button" data-bot="expertoglobal">🌐 Experto Global</button>
+    <button class="bot-button" data-bot="investigacion">📚 Investigación</button>
+    <button class="bot-button" data-bot="analisis">📊 Análisis</button>
+    <button class="bot-button" data-bot="escritura">✍️ Escritura</button>
+    <button class="bot-button" data-bot="educacion">🎓 Educación</button>
+    <button class="bot-button" data-bot="ciencia">🔬 Ciencia</button>
+    <button class="bot-button" data-bot="seguridad">🔐 Seguridad</button>
     <div style="margin-top:30px; font-size:12px; text-align:center; color:#666;">
       Hecho por Thaurock • Vector DB Local • Offline Real
     </div>
@@ -185,7 +185,7 @@
   <div class="chat-area">
     <div class="header" id="bot-name">
       <span class="hamburger" id="hamburger">☰</span>
-      ✅️ IA Matemáticas
+      🔢 IA Matemáticas
     </div>
     <div class="messages" id="messages"></div>
     
@@ -333,16 +333,16 @@ fileInput.onchange = async (e) => {
 };
 
 const personas = {
-  matematicas: { nombre: "✅️ Matemáticas", system: "Responde siempre en español neutro de Argentina. Eres un experto absoluto en Matemáticas." },
-  historia: { nombre: "✅️ Historia", system: "Responde siempre en español neutro de Argentina. Eres un experto absoluto en Historia." },
-  consejos: { nombre: "✅️ Consejos de Vida", system: "Responde siempre en español neutro de Argentina. Eres un mentor de vida." },
-  ExpertoGlobal: { nombre: "✅️ Experto Global", system: "Responde siempre en español neutro de Argentina. Eres un experto global." },
-  TecnologiaCombate: { nombre: "✅️ Tecnología de Combate", system: "Responde siempre en español neutro de Argentina. Eres especialista en Tecnología de Combate." },
-  SistemasQuantum: { nombre: "✅️ Sistemas Quantum", system: "Responde siempre en español neutro de Argentina. Eres especialista en Sistemas Quantum." },
-  EconomiaGuerra: { nombre: "✅️ Economía de Guerra", system: "Responde siempre en español neutro de Argentina. Eres especialista en Economía de Guerra." },
-  EnergiaSostenibilidad: { nombre: "✅️ Energía y Sostenibilidad", system: "Responde siempre en español neutro de Argentina. Eres especialista en Energía." },
-  IACombate: { nombre: "✅️ IA en Combate", system: "Responde siempre en español neutro de Argentina. Eres especialista en IA aplicada." },
-  RedesCiberespacio: { nombre: "✅️ Redes y Ciberespacio", system: "Responde siempre en español neutro de Argentina. Eres especialista en Ciberespacio." }
+  matematicas: { nombre: "🔢 Matemáticas", system: "Responde siempre en español neutro de Argentina. Eres un experto absoluto en Matemáticas." },
+  historia: { nombre: "⏳️ Historia", system: "Responde siempre en español neutro de Argentina. Eres un experto absoluto en Historia." },
+  programacion: { nombre: "💻 Programación", system: "Responde siempre en español neutro de Argentina. Eres un experto en Programación." },
+  expertoglobal: { nombre: "🌐 Experto Global", system: "Responde siempre en español neutro de Argentina. Eres un experto global." },
+  investigacion: { nombre: "📚 Investigación", system: "Responde siempre en español neutro de Argentina. Eres especialista en Investigación." },
+  analisis: { nombre: "📊 Análisis", system: "Responde siempre en español neutro de Argentina. Eres especialista en Análisis." },
+  escritura: { nombre: "✍️ Escritura", system: "Responde siempre en español neutro de Argentina. Eres especialista en Escritura." },
+  educacion: { nombre: "🎓 Educación", system: "Responde siempre en español neutro de Argentina. Eres especialista en Educación." },
+  ciencia: { nombre: "🔬 Ciencia", system: "Responde siempre en español neutro de Argentina. Eres especialista en Ciencia." },
+  seguridad: { nombre: "🔐 Seguridad", system: "Responde siempre en español neutro de Argentina. Eres especialista en Seguridad." }
 };
 
 startBtn.onclick = async () => {
