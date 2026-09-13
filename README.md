@@ -4,7 +4,7 @@
 [![WebGPU](https://img.shields.io/badge/WebGPU-Enabled-00ff9d?style=for-the-badge&logo=googlechrome&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API)
 [![Privacy](https://img.shields.io/badge/Privacy-100%25%20Offline%20%2F%20Zero--Data-blue?style=for-the-badge)](#-privacidad-y-seguridad)
 **BOLSILLO IAs** "Tu IA privada que vive en tu dispositivo" es una plataforma WebApp client-side de última generación que ejecuta un Modelo de Lenguaje de Gran Escala (LLM) de parámetros cuantizados directamente en la **GPU local del navegador** mediante WebGPU. 
-Procesamiento local: tus documentos y conversaciones no necesitan enviarse a un servidor para generar respuestas, al eliminar por completo la dependencia de servidores externos y APIs centralizadas, garantiza inferencia con latencia ultra baja, funcionamiento **100% offline después del primer inicio** y privacidad absoluta (*Zero-Knowledge*). Además, incluye un sistema RAG (Retrieval-Augmented Generation) vectorial local para procesamiento y consulta de documentos en tiempo real.
+Procesamiento local: tus documentos y conversaciones no necesitan enviarse a un servidor para generar respuestas, al eliminar por completo la dependencia de servidores externos y APIs centralizadas, garantiza inferencia con latencia ultra baja, funcionamiento **100% offline después del primer inicio** y privacidad absoluta. Además, incluye un sistema RAG (Retrieval-Augmented Generation) vectorial local para procesamiento y consulta de documentos en tiempo real.
 
 ---
 ## 🌟 Virtudes y Capacidades Principales
