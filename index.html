@@ -148,8 +148,8 @@
   <p>✅️ Founder & CEO THAUROCK ✅️</p>
   <p>Model: Phi 3.5 • Vector DB Local(RAG)</p>
   <p>Descarga única • 100% Offline después</p>
-  <p>Inferencia: WebGPU • Documentos: Local<p>
-  <p>OCR: Local • Network: No require<p>
+  <p>Inferencia: WebGPU • Documentos: Local</p>
+  <p>OCR: Local • Network: No requiere</p>
   <p style="color:#ff9800; font-size:0.95rem; max-width:360px;">
     Descarga por partes [streaming].<br>
     Puede tardar unos minutos según tu conexión.
@@ -209,7 +209,7 @@ let engine = null;
 let embedder = null;
 let currentBot = "matematicas";
 let chatMessages = [];
-let vectorStore = []; // Almacenará los chunks indexados: { id, text, vector }
+let vectorStore = [];
 
 const fileInput = document.getElementById("file-input");
 const startup = document.getElementById("startup");
@@ -240,7 +240,7 @@ function cosineSimilarity(vecA, vecB) {
 }
 
 // 2. CHUNKING DEL TEXTO
-function chunkText(text, chunkSize = 400, overlap = 50) {
+function chunkText(text, chunkSize = 1200, overlap = 200) {
   const chunks = [];
   let i = 0;
   while (i < text.length) {
@@ -305,16 +305,26 @@ fileInput.onchange = async (e) => {
     textoExtraido = textoExtraido.trim();
 
     if (textoExtraido.length > 0) {
+      const docId = `doc_${Date.now()}`;
       const rawChunks = chunkText(textoExtraido);
-      vectorStore = []; // Resetear base de datos vectorial local para nuevo documento
 
       for (let idx = 0; idx < rawChunks.length; idx++) {
         const chunkStr = rawChunks[idx];
         const vec = await getEmbedding(chunkStr);
-        vectorStore.push({ id: idx, text: chunkStr, vector: vec });
+
+        vectorStore.push({
+          id: `${docId}_chunk_${idx}`,
+          documentId: docId,
+          filename: file.name,
+          page: 1,
+          chunkIndex: idx,
+          chunk: chunkStr,
+          text: chunkStr,
+          vector: vec
+        });
       }
 
-      tempMsg.innerHTML = `✅ <b>Documento "${file.name}" vectorizado correctamente.</b><br>Se dividió en ${vectorStore.length} fragmentos. Ya podés hacer preguntas específicas sobre su contenido.`;
+      tempMsg.innerHTML = `✅ <b>Documento "${file.name}" vectorizado correctamente.</b><br>Se dividió en ${rawChunks.length} fragmentos con metadatos completos. Ya podés realizar consultas sobre su contenido.`;
       tempMsg.style.borderLeft = "4px solid var(--primary)";
     } else {
       tempMsg.innerHTML = "⚠️ No se pudo extraer texto legible del documento.";
@@ -346,15 +356,21 @@ const personas = {
   negocios: { nombre: "💼 Negocios", system: "Responde siempre en español neutro de Argentina. Eres experto absoluto en Negocios." }
 };
 
-startBtn.onclick = async () => {
+// MANEJADOR DE DESCARGA E INICIALIZACIÓN
+startBtn.addEventListener("click", async () => {
   startBtn.disabled = true;
   startBtn.textContent = "Cargando modelos... no cierres";
   progressContainer.style.display = "block";
 
   try {
+    if (!navigator.gpu) {
+      throw new Error("WebGPU no está habilitado en este navegador. Utiliza Chrome/Edge actualizado y ejecutalo desde un servidor (http://).");
+    }
+
     progressText.textContent = "Iniciando Modelo de Embeddings Vectoriales...";
     embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
 
+    progressText.textContent = "Cargando LLM Phi-3.5 en GPU...";
     engine = await CreateMLCEngine(
       "Phi-3.5-mini-instruct-q4f16_1-MLC",
       {
@@ -373,14 +389,15 @@ startBtn.onclick = async () => {
       inputArea.style.display = "flex";
       cambiarBot("matematicas");
       attachEvents();
-    }, 1500);
+    }, 1000);
+
   } catch (err) {
-    console.error(err);
-    progressText.innerHTML = `Error: ${err.message || err}<br>Recarga la página.`;
+    console.error("Error al iniciar:", err);
+    progressText.innerHTML = `<span style="color:#f44336;">❌ Error: ${err.message || err}</span><br><small>Asegurate de servir esta página mediante un servidor local (VSCode Live Server) y no abrir el archivo directamente (file:///).</small>`;
     startBtn.disabled = false;
     startBtn.textContent = "Reintentar descarga";
   }
-};
+});
 
 function attachEvents() {
   const hamburger = document.getElementById("hamburger");
@@ -441,21 +458,39 @@ async function enviarMensaje() {
 
   let promptFinal = texto;
 
-  // BÚSQUEDA VECTORIAL SI HAY UN DOCUMENTO CREADO
+  // BÚSQUEDA VECTORIAL MULTIDOCUMENTO CON CITAS Y CONTEXTO AMPLIADO
   if (vectorStore.length > 0 && embedder) {
     const queryVector = await getEmbedding(texto);
     
-    // Calcular similitud contra cada chunk
     const scoredChunks = vectorStore.map(item => ({
-      text: item.text,
+      item: item,
       score: cosineSimilarity(queryVector, item.vector)
     }));
 
-    // Ordenar y extraer los top 3 chunks más relevantes
     scoredChunks.sort((a, b) => b.score - a.score);
-    const topChunks = scoredChunks.slice(0, 3).map(c => c.text).join("\n---\n");
 
-    promptFinal = `CONTEXTO RECUPERADO DEL DOCUMENTO:\n"""\n${topChunks}\n"""\n\nCONSULTA DEL USUARIO: ${texto}`;
+    const topMatches = scoredChunks.slice(0, 5);
+    let contextBlocks = [];
+
+    topMatches.forEach(match => {
+      const core = match.item;
+      
+      const prevChunk = vectorStore.find(v => v.documentId === core.documentId && v.chunkIndex === core.chunkIndex - 1);
+      const nextChunk = vectorStore.find(v => v.documentId === core.documentId && v.chunkIndex === core.chunkIndex + 1);
+
+      let fullText = "";
+      if (prevChunk) fullText += prevChunk.text + " ";
+      fullText += core.text;
+      if (nextChunk) fullText += " " + nextChunk.text;
+
+      contextBlocks.push(
+        `[ARCHIVO: "${core.filename}" | PÁGINA/SECCIÓN: ${core.page} | ID: ${core.id}]\n"${fullText.trim()}"`
+      );
+    });
+
+    const contextFormatted = contextBlocks.join("\n\n---\n\n");
+
+    promptFinal = `CONTEXTO EXTRAÍDO DE LOS DOCUMENTOS INDEXADOS:\n"""\n${contextFormatted}\n"""\n\nCONSULTA DEL USUARIO: ${texto}\n\nINSTRUCCIÓN OBLIGATORIA: Responde la consulta basándote únicamente en el contexto proporcionado. Cuando menciones datos o afirmaciones del texto, CITA EXPLICITAMENTE la fuente utilizando el formato (Archivo, Página) correspondiente.`;
   }
 
   chatMessages.push({ role: "user", content: promptFinal });
