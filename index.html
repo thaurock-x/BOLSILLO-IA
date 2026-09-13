@@ -155,7 +155,7 @@
     Puede tardar unos minutos según tu conexión.
   </p>
 
-  <button class="big" id="startDownload">Iniciar descarga de IAs</button>
+  <button class="big" id="startDownload">Iniciar descarga de IAs & Embeddings</button>
 
   <div class="progress-container" id="progressContainer" style="display:none;">
     <div class="progress-bar" id="progressBar"></div>
@@ -240,7 +240,7 @@ function cosineSimilarity(vecA, vecB) {
 }
 
 // 2. CHUNKING DEL TEXTO
-function chunkText(text, chunkSize = 1200, overlap = 200) {
+function chunkText(text, chunkSize = 700, overlap = 100) {
   const chunks = [];
   let i = 0;
   while (i < text.length) {
@@ -458,7 +458,7 @@ async function enviarMensaje() {
 
   let promptFinal = texto;
 
-  // BÚSQUEDA VECTORIAL MULTIDOCUMENTO CON CITAS Y CONTEXTO AMPLIADO
+  // BÚSQUEDA VECTORIAL BANCADA POR TOP-3 FRAGMENTOS
   if (vectorStore.length > 0 && embedder) {
     const queryVector = await getEmbedding(texto);
     
@@ -469,28 +469,19 @@ async function enviarMensaje() {
 
     scoredChunks.sort((a, b) => b.score - a.score);
 
-    const topMatches = scoredChunks.slice(0, 5);
+    const topMatches = scoredChunks.slice(0, 3);
     let contextBlocks = [];
 
     topMatches.forEach(match => {
       const core = match.item;
-      
-      const prevChunk = vectorStore.find(v => v.documentId === core.documentId && v.chunkIndex === core.chunkIndex - 1);
-      const nextChunk = vectorStore.find(v => v.documentId === core.documentId && v.chunkIndex === core.chunkIndex + 1);
-
-      let fullText = "";
-      if (prevChunk) fullText += prevChunk.text + " ";
-      fullText += core.text;
-      if (nextChunk) fullText += " " + nextChunk.text;
-
       contextBlocks.push(
-        `[ARCHIVO: "${core.filename}" | PÁGINA/SECCIÓN: ${core.page} | ID: ${core.id}]\n"${fullText.trim()}"`
+        `[ARCHIVO: "${core.filename}" | SECCIÓN: ${core.id}]\n"${core.text.trim()}"`
       );
     });
 
     const contextFormatted = contextBlocks.join("\n\n---\n\n");
 
-    promptFinal = `CONTEXTO EXTRAÍDO DE LOS DOCUMENTOS INDEXADOS:\n"""\n${contextFormatted}\n"""\n\nCONSULTA DEL USUARIO: ${texto}\n\nINSTRUCCIÓN OBLIGATORIA: Responde la consulta basándote únicamente en el contexto proporcionado. Cuando menciones datos o afirmaciones del texto, CITA EXPLICITAMENTE la fuente utilizando el formato (Archivo, Página) correspondiente.`;
+    promptFinal = `CONTEXTO EXTRAÍDO DE LOS DOCUMENTOS:\n"""\n${contextFormatted}\n"""\n\nPREGUNTA DEL USUARIO: ${texto}\n\nINSTRUCCIÓN: Responde la consulta usando el contexto proporcionado. Cita explícitamente la fuente o cláusula si corresponde.`;
   }
 
   chatMessages.push({ role: "user", content: promptFinal });
@@ -501,13 +492,17 @@ async function enviarMensaje() {
   msgDiv.appendChild(respuestaDiv);
   scrollToBottom();
 
+  const messagesForEngine = [
+    chatMessages[0],
+    { role: "user", content: promptFinal }
+  ];
+
   try {
     const asyncChunkGenerator = await engine.chat.completions.create({
-      messages: chatMessages,
+      messages: messagesForEngine,
       temperature: 0.1,
-      max_tokens: 4000,
+      max_tokens: 1000,
       top_p: 0.3,
-      frequency_penalty: 0.2,
       stream: true
     });
 
@@ -531,8 +526,8 @@ async function enviarMensaje() {
     scrollToBottom();
 
   } catch (e) {
-    console.error(e);
-    respuestaDiv.innerHTML = "<span style='color:#ff5555;'>❌ Error al generar respuesta.</span>";
+    console.error("Error exacto en WebLLM:", e);
+    respuestaDiv.innerHTML = `<span style='color:#ff5555;'>❌ Error al generar respuesta: ${e.message || e}</span>`;
     scrollToBottom();
   }
 }
