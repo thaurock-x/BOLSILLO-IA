@@ -95,3 +95,12 @@ graph TD
     H --> I[Extracción Top-3 Chunks Relevantes]
     I --> J[Prompt Contextual + Phi-3.5 LLM via WebGPU]
     J --> K[Respuesta en Streaming]
+```
+---
+
+### ​📄 Licencia:
+
+<div align="center">
+Desarrollado con 💚 por <strong>Thaurock</strong>
+</div>
+
