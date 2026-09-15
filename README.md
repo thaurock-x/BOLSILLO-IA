@@ -87,7 +87,7 @@ Cada fragmento indexado dentro del arreglo local cumple con una estructura estri
 ```mermaid
 graph TD
     A[Archivo: PDF / TXT / Imagen OCR] --> B[Extracción de Texto Local]
-    B --> C[Chunking: Fragmentos de 400 caracteres]
+    B --> C[Chunking: Fragmentos de 700 caracteres]
     C --> D[Embedder: Xenova/all-MiniLM-L6-v2]
     D --> E[Vector Store en Memoria Local]
     F[Consulta del Usuario] --> G[Vector de Consulta]
