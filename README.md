@@ -23,7 +23,7 @@ Procesamiento local: tus documentos y conversaciones no necesitan enviarse a un 
   
 - **Agentes Especializados (Personas):**
 
--  Configuración dinámicas de prompts de sistema enfocados en áreas clave: Matemáticas, Historia, Consejos, Tecnología de Combate, Sistemas Quantum, Economía de Guerra, Energía & Sostenibilidad, IA en Combate y Redes & Ciberespacio.
+-  Configuración dinámicas de prompts de sistema enfocados en áreas clave: Matemáticas, Historia, Programación, Experto Global, Investigación, Análisis, Escritura, Educación, Ciencia, Seguridad, Negocios.
 
 - **Accesibilidad Multimodal Integrada:**
 - **OCR Local:**
@@ -48,9 +48,9 @@ El desarrollo y las métricas de rendimiento de **BOLSILLO IA/s** fueron concebi
 
 ---
 
-## 🚀 Capacidades Avanzadas del Engine RAG
+## 🚀 Capacidades del Engine RAG
 
-### 1. 📌 Citas y Trazabilidad Exacta (Source Attribution)
+### 1. 📌 Trazabilidad Exacta (Source Attribution)
 Garantiza precisión y elimina las alucinaciones del modelo al vincular cada afirmación con su origen físico dentro del documento.
 * **Metadatos Inyectados:** Cada bloque procesado almacena el nombre del archivo (`filename`), índice de fragmento (`chunkIndex`) y un identificador único global (`docID`).
 * **Verificabilidad Legal/Técnica:** El LLM redacta sus respuestas citando explícitamente la fuente o sección consultada (ej. `[ARCHIVO: "contrato.pdf" | SECCIÓN: doc_17892_chunk_7]`).
