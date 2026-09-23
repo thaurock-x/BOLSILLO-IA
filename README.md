@@ -121,8 +121,11 @@ graph TD
 ## 🔒 Privacidad y Seguridad
 
 Zero-Data Architecture: ningún documento, consulta ni embedding sale del dispositivo.
+
 Sin telemetría: no se envían métricas ni logs a servidores externos.
+
 Offline real: después de la descarga inicial del modelo, la aplicación no requiere conexión.
+
 Datos bajo control del usuario: los vectores viven en IndexedDB del navegador y pueden borrarse en cualquier momento.
 
 
