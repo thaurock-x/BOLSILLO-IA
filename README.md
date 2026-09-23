@@ -49,7 +49,7 @@ El desarrollo y las métricas de rendimiento de **BOLSILLO IA/s** fueron concebi
   Optimizado para el stack de procesadores móviles (Snapdragon, Dimensity, Apple Silicon) mediante WebGPU en Chrome / Kiwi / Edge (Android).
 
 * **Gestión Térmica y VRAM Calibrada**  
-  Chunking semántico (~700 caracteres efectivos), límite de 1000 tokens de salida y control de historial de conversación ajustados para minimizar *thermal throttling* y presión de memoria en dispositivos móviles.
+  Chunking semántico (~800 caracteres efectivos), límite de 1000 tokens de salida y control de historial de conversación ajustados para minimizar *thermal throttling* y presión de memoria en dispositivos móviles.
 
 * **UX Táctil e Interfaz Fluida**  
   Diseño *Touch-First* adaptado a pantallas verticales, con carga de archivos desde almacenamiento interno, indicadores visuales de indexación y síntesis de voz nativa.
