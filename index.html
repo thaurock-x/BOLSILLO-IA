@@ -727,7 +727,7 @@ async function enviarMensaje() {
     const asyncChunkGenerator = await engine.chat.completions.create({
       messages: messagesForEngine,
       temperature: 0.1,
-      max_tokens: 1000,
+      max_tokens: 2000,
       top_p: 0.3,
       stream: true
     });
