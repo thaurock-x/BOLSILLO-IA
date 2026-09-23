@@ -1,106 +1,134 @@
 # ⚡ BOLSILLO IA/s • Local LLM & Edge RAG Engine
+
 [![Deployment Status](https://img.shields.io/badge/Deploy-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://bolsillo-ia.vercel.app/)
 [![Target Hardware](https://img.shields.io/badge/Target-Smartphone%20Only-FF4081?style=for-the-badge&logo=android&logoColor=white)](#-disponibilidad-y-arquitectura-exclusiva-para-smartphones)
 [![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
 [![WebGPU](https://img.shields.io/badge/WebGPU-Enabled-00ff9d?style=for-the-badge&logo=googlechrome&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API)
 [![Privacy](https://img.shields.io/badge/Privacy-100%25%20Offline%20%2F%20Zero--Data-blue?style=for-the-badge)](#-privacidad-y-seguridad)
-**BOLSILLO IA/s** "Tu IA privada que vive en tu dispositivo" es una plataforma WebApp client-side de última generación que ejecuta un Modelo de Lenguaje de Gran Escala (LLM) de parámetros cuantizados directamente en la **GPU local del navegador móvil** mediante WebGPU.
-Aclaración Importante: Diseñado y calibrado exclusivamente para ejecutarse en la **GPU local de smartphones**
-Procesamiento local: tus documentos y conversaciones no necesitan enviarse a un servidor para generar respuestas, al eliminar por completo la dependencia de servidores externos y APIs centralizadas, garantiza inferencia con latencia ultra baja, funcionamiento **100% offline después del primer inicio** y privacidad absoluta. Además, incluye un sistema RAG (Retrieval-Augmented Generation) vectorial local para procesamiento y consulta de documentos en tiempo real.
+[![RAG](https://img.shields.io/badge/RAG-IndexedDB%20%2B%20Semantic%20Chunking-00ff9d?style=for-the-badge)](#-capacidades-del-engine-rag)
+
+**BOLSILLO IA/s** — *"Tu IA privada que vive en tu dispositivo"* — es una plataforma WebApp client-side de frontera que ejecuta un Modelo de Lenguaje de Gran Escala (LLM) cuantizado directamente en la **GPU local del navegador móvil** mediante WebGPU.
+
+> **Aclaración crítica:** Diseñado y calibrado exclusivamente para ejecutarse en la GPU local de smartphones.  
+> No depende de servidores externos ni de APIs centralizadas. Una vez descargados los pesos, la inferencia y el RAG operan **100 % offline**.
 
 ---
+
 ## 🌟 Virtudes y Capacidades Principales
 
-- **Inferencia 100% On-Device:** El modelo corre directamente en la aceleración de hardware del usuario (WebGPU). Sin llamadas API, sin latencias de red y sin tarifas por token. Una vez descargado el modelo, la inferencia no requiere Internet!.
+- **Inferencia 100 % On-Device**  
+  El modelo corre en la aceleración de hardware del usuario (WebGPU). Sin llamadas API, sin latencia de red y sin costo por token. Después de la descarga inicial, no se requiere Internet.
 
-- **RAG Vectorial Client-Side (Vector DB Local):**
+- **RAG Vectorial Persistente (IndexedDB)**  
+  Sistema de búsqueda semántica local que procesa PDF, TXT e imágenes (OCR). Los fragmentos se vectorizan y se almacenan de forma **persistente** en IndexedDB, sobreviviendo a recargas de página y cierres del navegador.
 
-- Sistema de búsqueda semántica local que procesa documentos PDF, archivos TXT e imágenes mediante OCR. Los datos se fragmentan, vectorizan y consultan completamente en memoria local.
-  
-- **Operatividad Offline Garantizada:**
+- **Chunking Semántico Avanzado**  
+  En lugar de cortes rígidos por caracteres, el motor segmenta el texto por **oraciones y párrafos completos**, preservando entidades nombradas y coherencia contextual. Incluye overlap de oraciones entre chunks.
 
-- Una vez descargados e indexados los pesos del modelo en la caché del navegador, la aplicación no requiere conexión a Internet.
-  
-- **Agentes Especializados (Personas):**
+- **Memoria Conversacional Multi-Turno**  
+  El motor recibe los últimos N turnos de la conversación, permitiendo referencias anafóricas naturales (“¿podés profundizar en lo primero que dijiste?”, “aplicá lo mismo al segundo caso”, etc.).
 
--  Configuración dinámicas de prompts de sistema enfocados en áreas clave: Matemáticas, Historia, Programación, Experto Global, Investigación, Análisis, Escritura, Educación, Ciencia, Seguridad, Negocios.
+- **Operatividad Offline Garantizada**  
+  Modelo + embeddings + vectores de documentos quedan cacheados localmente. La aplicación funciona sin conexión una vez inicializada.
 
-- **Accesibilidad Multimodal Integrada:**
-- **OCR Local:**
+- **Agentes Especializados (Personas)**  
+  System prompts dinámicos orientados a: Matemáticas, Historia, Programación, Experto Global, Investigación, Análisis, Escritura, Educación, Ciencia, Seguridad y Negocios.
 
-- Reconocimiento óptico de caracteres para imágenes usando Tesseract.js en español.
-  
-- **Lector de Documentos:**
+- **Accesibilidad Multimodal Integrada**
+  - **OCR Local** → Tesseract.js (español)
+  - **Lector de Documentos** → PDF.js + soporte nativo `.txt`
+  - **Text-to-Speech** → Síntesis de voz nativa en español neutro (AR)
 
-- Extracción nativa de texto para PDFs (`PDF.js`) y archivos `.txt`.
-
-- **Text-To-Speech (TTS):**
-    
-- Sintetizador de voz nativo en español neutro (AR).
 ---
+
 ## 📱 Disponibilidad y Arquitectura Exclusiva para Smartphones
 
 El desarrollo y las métricas de rendimiento de **BOLSILLO IA/s** fueron concebidos bajo un paradigma **Mobile-First / Smartphone-Only** (*Mobile Edge Computing*).
 
-* **Aceleración Hardware On-Device:** Optimizado para el stack de procesadores móviles (Snapdragon, Dimensity, Apple Silicon) mediante la API WebGPU en navegadores móviles (Chrome / Kiwi / Edge en Android).
-* **Gestión Térmica y VRAM Calibrada:** El esquema de fragmentación (*chunking* a 700 caracteres) y el límite de tokens activos (1000) están ajustados para prevenir el estrangulamiento térmico (*thermal throttling*) y evitar el cierre de pestañas por presión de memoria RAM/VRAM en el sistema operativo móvil.
-* **UX Táctil e Interfaz Fluida:** Diseño responsivo *Touch-First* adaptado a pantallas verticales, con soporte nativo para carga de archivos desde el almacenamiento interno, vista rápida de fragmentos y sintesis de voz (*Text-To-Speech*).
+* **Aceleración Hardware On-Device**  
+  Optimizado para el stack de procesadores móviles (Snapdragon, Dimensity, Apple Silicon) mediante WebGPU en Chrome / Kiwi / Edge (Android).
+
+* **Gestión Térmica y VRAM Calibrada**  
+  Chunking semántico (~700 caracteres efectivos), límite de 1000 tokens de salida y control de historial de conversación ajustados para minimizar *thermal throttling* y presión de memoria en dispositivos móviles.
+
+* **UX Táctil e Interfaz Fluida**  
+  Diseño *Touch-First* adaptado a pantallas verticales, con carga de archivos desde almacenamiento interno, indicadores visuales de indexación y síntesis de voz nativa.
 
 ---
 
 ## 🚀 Capacidades del Engine RAG
 
 ### 1. 📌 Trazabilidad Exacta (Source Attribution)
-Garantiza precisión y elimina las alucinaciones del modelo al vincular cada afirmación con su origen físico dentro del documento.
-* **Metadatos Inyectados:** Cada bloque procesado almacena el nombre del archivo (`filename`), índice de fragmento (`chunkIndex`) y un identificador único global (`docID`).
-* **Verificabilidad Legal/Técnica:** El LLM redacta sus respuestas citando explícitamente la fuente o sección consultada (ej. `[ARCHIVO: "contrato.pdf" | SECCIÓN: doc_17892_chunk_7]`).
+Cada respuesta del modelo cita explícitamente la fuente física del documento:
 
-### 2. 📚 Soporte Multi-Documento Simultáneo (Multi-Document RAG)
-Permite subir múltiples archivos de forma paralela sin perder rendimiento en la búsqueda.
-* **Indexación en Vector Store Único:** Procesa contratos en PDF, documentos de texto plano (`.txt`) y capturas o imágenes analizadas vía OCR dentro de una misma base de datos vectorial unificada en memoria.
-* **Consultas Cruzadas:** La búsqueda por similitud coseno cruza e integra en una sola respuesta fragmentos provenientes de distintos archivos.
+Esto reduce alucinaciones y aporta verificabilidad legal/técnica.
 
-### 3. 🧠 Recuperación Contextual Avanzada (Reconstrucción del Texto)
-Supera el problema del texto cortado típico del fragmentado estático mediante un algoritmo de reconstrucción de contexto adyacente.
-* **Expansion de Ventana:** Al encontrar un *match* semántico, el sistema extrae automáticamente el fragmento seleccionado junto con su bloque anterior (`chunkIndex - 1`) y posterior (`chunkIndex + 1`).
-* **Coherencia Sintáctica:** Asegura que cláusulas, oraciones o tablas partidas por los límites de caracteres se reconstruyan completamente antes de ser enviadas al prompt del LLM.
+### 2. 📚 Multi-Documento + Persistencia IndexedDB
+- Indexación de múltiples PDF, TXT e imágenes en una única base de datos vectorial local.
+- Los vectores **persisten** entre sesiones gracias a IndexedDB.
+- Consultas cruzadas entre documentos en una sola respuesta.
 
-### 4. 🗂️ Filtrado Específico por Metadatos
-Cada fragmento indexado dentro del arreglo local cumple con una estructura estricta de metadatos.
+### 3. 🧠 Chunking Semántico + Overlap
+- Segmentación por oraciones y párrafos completos (no por `slice` rígido).
+- Overlap de oraciones entre chunks para no perder contexto en los bordes.
+- Evita cortar entidades nombradas, cláusulas o definiciones a la mitad.
+
+### 4. 🔄 Memoria Conversacional (Multi-Turn)
+- El motor recibe los últimos **6 turnos** (configurable) de la conversación.
+- Permite referencias anafóricas naturales y continuidad de razonamiento.
+- El contexto RAG se inyecta solo en el turno actual, manteniendo el historial limpio.
+
+### 5. 🗂️ Gestión de Memoria RAG
+- Botón **📊** → muestra la cantidad de vectores actualmente almacenados.
+- Botón **🗑️** → limpia completamente la base de datos vectorial (con confirmación).
+- Funciones internas disponibles para borrado selectivo por `documentId`.
 
 ---
 
 ## 🛠️ Arquitectura Técnica y Stack Tecnológico
 
-| Componente | Tecnología / Librería | Función |
-| :--- | :--- | :--- |
-| **Aceleración Hardware** | WebGPU API | Aceleración gráfica por hardware directo dentro del navegador |
-| **Motor LLM** | `@mlc-ai/web-llm` | Ejecución de inferencia de modelos cuantizados (Phi-3.5-mini-instruct-q4f16_1-MLC) |
-| **Embeddings & Vector DB** | `@xenova/transformers` | Pipeline de extracción de características con `Xenova/all-MiniLM-L6-v2` |
-| **OCR Local** | `tesseract.js` | Extracción de texto desde imágenes |
-| **Procesamiento PDF** | `pdf.js` | Renderizado y extracción de texto página por página |
-| **Parseo Markdown** | `marked` | Renderizado de código y formato en tiempo real |
+| Componente                  | Tecnología / Librería                  | Función                                      |
+|-----------------------------|----------------------------------------|----------------------------------------------|
+| **Aceleración Hardware**    | WebGPU API                             | Inferencia GPU directa en el navegador       |
+| **Motor LLM**               | `@mlc-ai/web-llm`                      | Phi-3.5-mini-instruct-q4f16_1-MLC            |
+| **Embeddings**              | `@xenova/transformers`                 | `Xenova/all-MiniLM-L6-v2`                    |
+| **Vector Store Persistente**| IndexedDB                              | Almacenamiento local de embeddings + metadatos |
+| **OCR Local**               | `tesseract.js`                         | Extracción de texto desde imágenes           |
+| **Procesamiento PDF**       | `pdf.js`                               | Extracción página por página                 |
+| **Parseo Markdown**         | `marked`                               | Renderizado en streaming                     |
+| **Chunking**                | Algoritmo semántico propio             | Oraciones + párrafos + overlap               |
+| **Memoria de Chat**         | Sliding Window (últimos N turnos)      | Contexto conversacional multi-turno          |
 
 ---
 
-## 🧠 Flujo del Sistema RAG Vectorial Local
+## 🧠 Flujo del Sistema RAG Vectorial Local (Actualizado)
+
 ```mermaid
 graph TD
     A[Archivo: PDF / TXT / Imagen OCR] --> B[Extracción de Texto Local]
-    B --> C[Chunking: Fragmentos de 700 caracteres]
+    B --> C[Chunking Semántico<br/>Oraciones + Párrafos + Overlap]
     C --> D[Embedder: Xenova/all-MiniLM-L6-v2]
-    D --> E[Vector Store en Memoria Local]
+    D --> E[Vector Store Persistente<br/>IndexedDB]
     F[Consulta del Usuario] --> G[Vector de Consulta]
-    G --> H[Cálculo Similitud Coseno vs Embeddings]
-    H --> I[Extracción Top-3 Chunks Relevantes]
-    I --> J[Prompt Contextual + Phi-3.5 LLM via WebGPU]
-    J --> K[Respuesta en Streaming]
+    G --> H[Similitud Coseno vs Embeddings]
+    H --> I[Top-3 Chunks Relevantes]
+    I --> J[Prompt Contextual + Historial de Chat]
+    J --> K[Phi-3.5 LLM vía WebGPU]
+    K --> L[Respuesta en Streaming + TTS]
 ```
 ---
 
-### ​📄 Licencia:
+## 🔒 Privacidad y Seguridad
 
-<div align="center">
-Desarrollado con 💚 por <strong>Thaurock</strong>
-</div>
+Zero-Data Architecture: ningún documento, consulta ni embedding sale del dispositivo.
+Sin telemetría: no se envían métricas ni logs a servidores externos.
+Offline real: después de la descarga inicial del modelo, la aplicación no requiere conexión.
+Datos bajo control del usuario: los vectores viven en IndexedDB del navegador y pueden borrarse en cualquier momento.
 
+
+## 📄 Licencia
+MIT License
+
+Desarrollado con 💚 por Thaurock
+
+Edge AI • Local-First • Privacy by Design
