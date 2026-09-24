@@ -6,6 +6,8 @@
 [![WebGPU](https://img.shields.io/badge/WebGPU-Enabled-00ff9d?style=for-the-badge&logo=googlechrome&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/API/WebGPU_API)
 [![Privacy](https://img.shields.io/badge/Privacy-100%25%20Offline%20%2F%20Zero--Data-blue?style=for-the-badge)](#-privacidad-y-seguridad)
 [![RAG](https://img.shields.io/badge/RAG-IndexedDB%20%2B%20Semantic%20Chunking-00ff9d?style=for-the-badge)](#-capacidades-del-engine-rag)
+[![Demo en vivo](https://img.shields.io/badge/Demo_en_vivo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://tu-proyecto.vercel.app)
+
 
 **BOLSILLO IA/s** — *"Tu IA privada que vive en tu dispositivo"* — es una plataforma WebApp client-side de frontera que ejecuta un Modelo de Lenguaje de Gran Escala (LLM) cuantizado directamente en la **GPU local del navegador móvil** mediante WebGPU.
 
