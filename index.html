@@ -201,7 +201,7 @@ function cosineSimilarity(vecA, vecB) {
   }
   return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
 }
-function chunkText(text, maxChunkSize = 900, overlapSentences = 1) {
+function chunkText(text, maxChunkSize = 800, overlapSentences = 1) {
   const paragraphs = text.split(/\n\s*\n/).map(p => p.trim()).filter(p => p.length > 0);
   const sentenceRegex = /(?<=[.!?…])\s+(?=[A-ZÁÉÍÓÚÑÜ¿¡])/g;
   let allSentences = [];
@@ -443,11 +443,11 @@ window.limpiarRAG = async function() {
     alert("Error al limpiar la base de datos RAG.");
   }
 };
-const MAX_HISTORY_TURNS = 20;
+const MAX_HISTORY_TURNS = 8;
 function buildMessagesForEngine(promptFinal) {
   const messages = [chatMessages[0]];
   const history = chatMessages.slice(1);
-  const maxMessages = MAX_HISTORY_TURNS * 4;
+  const maxMessages = MAX_HISTORY_TURNS * 2;
   const recentHistory = history.slice(-maxMessages);
   recentHistory.forEach(msg => {
     if (msg.role === "user" || msg.role === "assistant") {
@@ -526,7 +526,7 @@ INSTRUCCIÓN: Respondé usando el contexto solo si es útil. Si la pregunta es u
   try {
     const asyncChunkGenerator = await engine.chat.completions.create({
       messages: messagesForEngine,
-      temperature: 0.13,
+      temperature: 0.1,
       max_tokens: 2048,
       top_p: 0.4,
       stream: true
@@ -560,7 +560,7 @@ INSTRUCCIÓN: Respondé usando el contexto solo si es útil. Si la pregunta es u
 
       if (pauseCounter >= 10) {
         pauseCounter = 0;
-        await new Promise(resolve => setTimeout(resolve, 5));
+        await new Promise(resolve => setTimeout(resolve, 8));
       }
     }
 
